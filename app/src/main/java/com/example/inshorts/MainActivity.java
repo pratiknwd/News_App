@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         final VerticalViewPager verticalViewPager = (VerticalViewPager) findViewById(R.id.verticalViewPager);
 
-        mRef = FirebaseDatabase.getInstance().getReference("News");
+        mRef = FirebaseDatabase.getInstance().getReference("news");
 
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
