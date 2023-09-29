@@ -1,13 +1,14 @@
 package com.example.inshorts;
 
 public class SliderItems {
-    private int image;
 
-    public SliderItems(int image) {
+    private String image;
+
+    public SliderItems(String image) {
         this.image = image;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 }
