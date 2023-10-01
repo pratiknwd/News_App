@@ -3,7 +3,6 @@ package com.example.inshorts;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,14 +11,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 public class ViewPagerAdapter extends PagerAdapter {
 
@@ -33,7 +32,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     VerticalViewPager verticalViewPager;
 
     int newposition;
-    float x1,x2;
+    float x1, x2;
 
 
     public ViewPagerAdapter(Context context, List<SliderItems> sliderItems, ArrayList<String> titles, ArrayList<String> desc,
@@ -62,13 +61,21 @@ public class ViewPagerAdapter extends PagerAdapter {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
-        View itemView = mLayoutInflater.inflate(R.layout.item_container,container,false);
+        View itemView = mLayoutInflater.inflate(R.layout.item_container, container, false);
 
         ImageView imageView = itemView.findViewById(R.id.imageView);
         ImageView imageView2 = itemView.findViewById(R.id.imageView2);
         TextView title = itemView.findViewById(R.id.headline);
         TextView desctv = itemView.findViewById(R.id.desc);
         TextView head = itemView.findViewById(R.id.head);
+        TextView tapToOpen = itemView.findViewById(R.id.taphere);
+
+        tapToOpen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWebView(position);
+            }
+        });
 
         //set data from array list to textview
         title.setText(titles.get(position));
@@ -83,7 +90,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         Glide.with(context)
                 .load(sliderItems.get(position).getImage())
                 .centerCrop()
-                .override(12,12)
+                .override(12, 12)
                 .into(imageView2);
 
         verticalViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -107,30 +114,16 @@ public class ViewPagerAdapter extends PagerAdapter {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction())
-                {
+                switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x1 = motionEvent.getX();
                         break;
                     case MotionEvent.ACTION_UP:
                         x2 = motionEvent.getX();
-                        float deltaX = x1-x2;
+                        float deltaX = x1 - x2;
 
-                        if(deltaX > 300)
-                        {
-                            Intent i = new Intent(context,NewsDetailActivity.class);
-                            if(position == 1)
-                            {
-                                //for first page
-                                i.putExtra("url",newslinks.get(0));
-                                context.startActivity(i);
-                            }
-                            else
-                            {
-                                //when page scrolled
-                                i.putExtra("url",newslinks.get(newposition));
-                                context.startActivity(i);
-                            }
+                        if (deltaX > 300) {
+                            openWebView(position);
                         }
                         break;
                 }
@@ -138,10 +131,21 @@ public class ViewPagerAdapter extends PagerAdapter {
             }
         });
 
-
         container.addView(itemView);
         return itemView;
+    }
 
+    private void openWebView(int position) {
+        Intent i = new Intent(context, NewsDetailActivity.class);
+        if (position == 1) {
+            //for first page
+            i.putExtra("url", newslinks.get(0));
+            context.startActivity(i);
+        } else {
+            //when page scrolled
+            i.putExtra("url", newslinks.get(newposition));
+            context.startActivity(i);
+        }
     }
 
     @Override
