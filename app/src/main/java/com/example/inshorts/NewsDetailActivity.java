@@ -21,6 +21,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         Intent i =getIntent();
         newslink = i.getStringExtra("url");
 
+
         WebView view = (WebView)findViewById(R.id.webview);
         view.setWebViewClient(new WebViewClient(){
             @Override
